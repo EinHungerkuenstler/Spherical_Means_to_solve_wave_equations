@@ -1,0 +1,938 @@
+\documentclass[10pt]{article}
+\usepackage{amsthm,amsmath,amsfonts,amssymb,slashed,listings,mathtools,enumitem,verbatim,esint}
+\title{Wave equations: Solution by Spherical Means}
+\author{Imperial College London\\W.H.Y.}
+\def\zz{{\mathbb Z}}
+\def\rr{{\mathbb R}}
+\def\cc{{\mathbb C}}
+\def\qq{{\mathbb Q}}
+\def\ee{{\mathbb E}}
+\def\nn{{\mathbb N}}
+\def\ff{{\mathbb F}}
+\def\vc{{\mathbf x}}
+\def\vcc{{\mathbf y}}
+\def\vccc{{\mathbf z}}
+\def\so{{\overline u}}
+\def\wa{{\tilde U}}
+\def\lu{{\Delta  u}}
+\def\tp{{\left(\frac{1}{t}\frac{\partial}{\partial t}\right)}}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{fact}{Fact}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\newcommand\tbbint{{-\mkern -16mu\int}}
+\newcommand\tbint{{\mathchar '26\mkern -14mu\int}}
+\newcommand\dbbint{{-\mkern -19mu\int}}
+\newcommand\dbint{{\mathchar '26\mkern -18mu\int}}
+\newcommand\bint{
+{\mathchoice{\dbint}{\tbint}{\tbint}{\tbint}}
+}
+\newcommand\bbint{
+{\mathchoice{\dbbint}{\tbbint}{\tbbint}{\tbbint}}
+}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Preliminaries}
+
+\subsection{Notations}
+
+\begin{itemize}
+    \item[(i)] $D u = (u_{x_1}, u_{x_2}. u_{x_3}, \cdots, u_{x_n})$ is the gradient of $u$.
+    \item[(ii)] $\Delta=$ Laplacian operator $\Delta u = \sum_{i=1}^n u_{x_i x_i}$.
+    \item[(iii)] $C^k(U) = \{u: U \to \rr\ |\ \text{$u$ is $k$-times continuously differentiable}\}$.
+    \item[(iv)] $ B(\mathbf{x},r) = \text{closed ball with center $\mathbf{x}$ and radius $r$}$.
+    \item[(v)] $\partial U = \text{boundary of $U$}$, $\overline{U} = U \cup \partial U = \text{closure of $U$}$.
+    \item[(vi)] $\alpha(n)$ = \text{volume of unit ball $ B(\mathbf{0},1)$ in $\rr^n= \frac{\pi^{\frac{n}{2}}}{\Gamma(\frac{n}{2}+1)}$}.
+    \item[(vii)] $n \alpha(n) = \text{surface area of unit sphere $\partial B (\mathbf{0},1)$ in $\rr^n$}$, where $\Gamma$ is the Gamma function: $\Gamma(n) = \int_0^\infty t^{n-1} e^{-t} dt$.
+    \item[(viii)] Averages:
+                 \begin{align*}
+                    \bbint_{B(\mathbf{x},r)} f dy &= \frac{1}{\alpha(n) r^n} \int_{B(\mathbf{x},r)} f dy\\ 
+                    &= \text{avarage of $f$ over the ball $B(\vc,r)$}\\
+                    \bbint_{\partial B(\vc,r)} f dS &= \frac{1}{n\alpha(n) r^{n-1}} \int_{\partial B(\vc,r)} f dS\\
+                    &= \text{average of $f$ over the sphere $\partial B(\vc,r)$}
+                 \end{align*}
+    \item[(ix)] If $\partial U \in C^1$, then along $\partial U$ is defined as the \textit{outward pointing} unit normal vector field:
+    $$
+    \nu = (\nu_1, \nu_2, \cdots, \nu_n)
+    $$
+    The unit normal at any point $x^0 \in \partial U$ is $\mathbf{\nu}(x^0) = \nu = (\nu_1, \nu_2, \cdots, \nu_n)$.
+    \item [(x)] Let $u \in C^1(\overline{U})$. Then the (outward) \textit{normal derivative} of $u$ along $\partial U$ is defined as:
+    \begin{equation*}
+        \frac{\partial u}{\partial \nu} := \nu \cdot D u = \sum_{i=1}^n \nu_i u_{x_i}
+    \end{equation*}
+\end{itemize}
+
+
+\subsection{Gauss-Green's Theorem}
+Suppose $ u\in C^1(\overline{U})$ and $U \subset \rr^n$ is a bounded domain with smooth boundary $\partial U$. Then
+\begin{equation*}
+    \int_U  u_{x_i} dx = \int_{\partial U} u \nu^i dS
+\end{equation*}
+
+\subsection{Green's Formula}
+    Let $u, v \in C^2(\overline{U})$ and $U \subset \rr^n$ be a bounded domain with smooth boundary $\partial U$. Then
+    \begin{itemize}
+        \item [(i)] $\int_U \Delta u dx = \int_{\partial U} \frac{\partial u}{\partial \nu} dS$.
+        \item [(ii)] $\int_U Dv \cdot Du dx = \int_{\partial U} u \frac{\partial v}{\partial \nu} dS - \int_U u \Delta v dx$,
+        \item [(iii)] $\int_U u \Delta v - v \Delta u dx = \int_{\partial U} u \frac{\partial v}{\partial \nu} - v \frac{\partial u}{\partial \nu}$.
+    \end{itemize}
+\subsection{Theorem: Polar Coordinates}
+\begin{itemize}
+    \item [(i)] Let $f:\rr^n\to \rr$ be continous and summable. Then
+    \begin{equation*}
+        \int_{\rr^n} f dx = \int_0^\infty \left(\int_{\partial B(\vc_0,r)} f dS\right) dr
+    \end{equation*}
+    for each point $\vc_0 \in \rr^n$.
+    \item [(ii)] In particular, 
+    \begin{equation*}
+        \frac{d}{dr}\left(\int_{B(\vc_0,r)}f d\vc\right) = \int_{\partial B(\vc_0,r)} f dS
+    \end{equation*}
+    for each $r>0$.
+\end{itemize}
+\subsection{Transport equation: initial value problem}
+Consider the following initial value problem:
+\begin{equation*}
+    \begin{cases}
+        u_t + b\cdot D u = 0\quad \text{in} \ \rr^n\times (0,\infty),\\
+        u = g \quad\text{on} \ \rr^n \times \{t=0\}.
+    \end{cases}
+\end{equation*}
+The solution is 
+\begin{equation}
+    \label{Tis}
+    u(\mathbf{x},t) = g(x-bt) \quad (\mathbf{x} \in \rr^n, t\geq 0)
+\end{equation}
+\subsection{Transport equation: nonhomogeneous problem}
+Consider the following nonhomogeneous problem:
+\begin{equation}
+    \begin{cases}
+        u_t + b\cdot D u = f(\mathbf{x},t) \quad \text{in} \ \rr^n\times (0,\infty),\\
+        u = g \quad \text{on} \ \rr^n \times \{t=0\}.
+    \end{cases}
+\end{equation}
+The solution is
+\begin{equation}
+    \label{nhte}
+    u(\vc,t) = g(\vc-t\mathbf{b}) + \int_0^t f(\vc+(s-t)\mathbf{b},s) ds \quad (\vc \in \rr^n, t\geq 0)
+\end{equation}
+\section{Solution by spherical means}
+We consider the initial-value problem for the wave equation in $n$ dimensions,
+\begin{equation}
+    \label{wave}
+    \begin{cases}
+        u_{tt} - c^2\Delta u = 0 \quad \text{in} \ \rr^n\times (0,\infty),\\
+        u = g, u_t = h \quad \text{on} \ \rr^n\times \{t=0\}.
+    \end{cases}
+\end{equation}
+\subsection{Solution for $\mathbf{n=1}$, d'Alembert's formula}
+For the one dimensional wave equation in all of $\rr$:
+\begin{equation}
+\label{1we}
+    \begin{cases}
+        u_{tt} - u_{xx} = 0 \quad \text{in} \ \rr\times (0,\infty),\\
+        u = g, u_t = h \quad \text{on} \ \rr\times \{t=0\}.
+    \end{cases}
+\end{equation}
+where $g,h$ are given functions. We desire to derive a formula for $u$ in terms of $g,h$. we desire to derive a formula for $u$ in terms of $g,h$. We use the method of spherical means. We notice that $(\ref{1we})$ could be "factored" as:
+\begin{equation}
+    \label{factored}
+    \left(\frac{\partial}{\partial t}+\frac{\partial}{\partial x}\right)\left(\frac{\partial}{\partial t}-\frac{\partial}{\partial x}\right) u = u_{tt} - u_{xx} = 0
+\end{equation}
+We could write
+\begin{equation}
+    \label{vdef}
+    v(x,t) := \left(\frac{\partial}{\partial t}-\frac{\partial}{\partial x}\right) u(x,t) = u_t(x,t) - u_x(x,t)
+\end{equation}
+Then, we have
+\begin{align*}
+    v_t = u_{tt} - u_{xt}\\
+    v_x = u_{tx} - u_{xx}
+\end{align*}
+We could sum them to get
+\begin{equation}
+    \label{vtx}
+    v_t(x,t) + v_x(x,t) = 0 \quad (x \in \rr, t>0)
+\end{equation}
+Whereas, $(\ref{vtx})$ is a transport equation with constant coefficients $b = 1$ and $n = 1$. We apply $(\ref{Tis})$ and get
+\begin{equation}
+    \label{vtx2}
+    v(x,t) = a(x-t)
+\end{equation}
+with $a(x): = v(x,0) = u_t(x,0) - u_x(x,0)$. Combining now $(\ref{vdef})$ and $(\ref{vtx2})$, we get
+\begin{equation}
+    \label{nte}
+    u_t(x,t) - u_x(x,t) = a(x-t) \quad \text{in} \quad \rr \times (0,\infty)
+\end{equation}
+We notice that $(\ref{nte})$ is a nonhomogeneous transport equation, so $(\ref{nhte})$ with $n = 1, \mathbf{b} = -1, f(x,t) = a(x-t)$ implies
+\begin{align}
+    \label{snte}
+    u(x,t) = b(x+t) + \int_0^t a(x+(t-s)-s) ds = \frac{1}{2}\int_{x-t}^{x+t} a(y) dy + b(x+t) 
+\end{align}
+where $b(x) := u(x,0)$. Lastly, we invoke the initial conditions in $(\ref{1we})$ to compute $a$ and $b$. For the first intial condition, We set $t = 0$ in $(\ref{snte})$, then we get
+\begin{equation}
+    \label{bdef}
+    u(x,0) = b(x) = g(x) \quad (x \in \rr)
+\end{equation}
+For the second initial condition, we differentiate $(\ref{snte})$ with respect to $t$
+\begin{equation*}
+    u_t(x,t) = \frac{1}{2}[a(x+t) + a(x-t)] + b'(x+t) \quad (x \in \rr, t \geq 0)
+\end{equation*}
+Then, let $t = 0$
+\begin{equation*}
+    u_t(x,0) = \frac{1}{2}[a(x) + a(x)] + b'(x) = a(x) + b'(x) = h(x)
+    \implies a(x) = h(x) - b'(x) \quad (x \in \rr)
+\end{equation*}
+By (\ref{bdef}),
+\begin{equation*}
+    a(x) = h(x) - g'(x) \quad (x \in \rr)
+\end{equation*}
+We subtitude this into $(\ref{snte})$
+\begin{equation*}
+    u(x,t) = \frac{1}{2}\int_{x-t}^{x+t} [h(y) - g'(y)] dy + g(x+t) \quad (x \in \rr, t \geq 0)
+\end{equation*}
+Then using the fundamental theorem of calculus, we get
+\begin{equation}
+    \label{dalem}
+    u(x,t) = \frac{1}{2}\int_{x-t}^{x+t} h(y) dy + \frac{1}{2}[g(x+t) + g(x-t)] \quad (x \in \rr, t \geq 0)
+\end{equation}
+This is \textit{d'Alembert's formula} for the one dimensional wave equation. We could assume $u$ is sufficiently smooth and check that this is really a solution of $(\ref{1we})$.
+\begin{theorem}(Solution of wave equation, $n=1$)
+    Assume $g\in C^2(\rr), h \in C^1(\rr)$ and define $u$ by d'Alembert's formula $(\ref{dalem})$. 
+    \begin{equation*}
+        u(x,t) = \frac{1}{2}\int_{x-t}^{x+t} h(y) dy + \frac{1}{2}[g(x+t) + g(x-t)] \quad (x \in \rr, t \geq 0)
+    \end{equation*}
+    Then,
+    \begin{itemize}
+        \item [(i)] $u \in C^2(\rr \times [0,\infty))$,
+        \item [(ii)] $u_{tt} - u_{xx} = 0 \quad \text{in} \ \rr \times (0,\infty)$,
+        \item [(iii)] $\lim_{(x,t) \to (x^0,0^+)} u(x,t) = g(x^0)$, $\lim_{(x,t) \to (x^0,0^+)} u_t(x,t) = h(x^0)$ for each point $x^0 \in \rr$.
+    \end{itemize}
+\end{theorem}
+\begin{proof}
+    We assume $g \in C^2(\rr), h \in C^1(\rr)$ and define $u$ by d'Alembert's formula $(\ref{dalem})$. Then, $u$ is clearly $C^2$ in $\rr \times (0,\infty)$. We now check that $u$ satisfies the wave equation. We differentiate $u$ with respect to $t$ and $x$.
+    \begin{align*}
+        u_t(x,t) =& \frac{1}{2}[h(x+t) + h(x-t)] + \frac{1}{2}[g'(x+t) - g'(x-t)]\\
+        u_x(x,t) =& \frac{1}{2}[h(x+t) - h(x-t)] + \frac{1}{2}[g'(x+t) + g'(x-t)]
+    \end{align*}
+    Then, we compute $u_{tt}$ and $u_{xx}$.
+    \begin{align*}
+        u_{tt}(x,t) =& \frac{1}{2}[h'(x+t) - h'(x-t)] + \frac{1}{2}[g''(x+t) + g''(x-t)]\\
+        u_{xx}(x,t) =& \frac{1}{2}[h'(x+t) + h'(x-t)] + \frac{1}{2}[g''(x+t) + g''(x-t)]
+    \end{align*}
+    It is clear that $u_{tt} - u_{xx} = 0$ in $\rr \times (0,\infty)$. Lastly, we check the initial conditions. We first check that $\lim_{(x,t) \to (x^0,0)} u(x,t) = g(x^0)$ for each $x^0 \in \rr$. We fix $x^0 \in \rr$ and let $(x,t) \to (x^0,0)$. Then, $x-t \to x^0$ and $x+t \to x^0$. Thus, by continuity of $g$,
+    \begin{equation*}
+        \lim_{(x,t) \to (x^0,0^+)} u(x,t) = \frac{1}{2}\int_{x^0}^{x^0} h(y) dy + \frac{1}{2}[g(x^0) + g(x^0)] = g(x^0)
+    \end{equation*}
+    Next, we check that $\lim_{(x,t) \to (x^0,0)} u_t(x,t) = h(x^0)$ for each $x^0 \in \rr$. We fix $x^0 \in \rr$ and let $(x,t) \to (x^0,0)$. Then, $x-t \to x^0$ and $x+t \to x^0$. Thus, by continuity of $h$,
+    \begin{equation*}
+        \lim_{(x,t) \to (x^0,0^+)} u_t(x,t) = \frac{1}{2}[h(x^0) + h(x^0)] + \frac{1}{2}[g'(x^0) - g'(x^0)] = h(x^0)
+    \end{equation*}
+\end{proof}
+\begin{remark}
+    \begin{itemize}
+        \item [(i)] Observing $(\ref{dalem})$, we see that the solution $u$ has the form
+                $$
+                u(x,t) = F(x+t) + G(x-t)
+                $$
+        for some function $F$ and $G$. Conversely, and function of this form solves the wave equation $u_{tt} - u_{xx} = 0$ in $\rr \times (0,\infty)$. Also, $F(x+t)$ is the general solution of $u_t - u_x = 0$ and $G(x-t)$ is the general solution of $u_t + u_x = 0$. Hence, the general solution of the one-dimentional wave equation is the sum of the general solution of $u_t - u_x = 0$ and the general solution of $u_t + u_x = 0$. This is the consequence of the factorization in (\ref{factored}).
+        \item [(ii)] We see that from \ref{dalem}, if $ g \in C^k$ and $h \in C^{k-1}$, then $u \in C^k(\rr \times [0,\infty))$ but is not general smoother. Thus, the wave equation does not couse instantaneous smoothing of the initial data.
+    \end{itemize}
+\end{remark}
+
+\subsubsection{A reflection method}
+To illustrate a further application of d'Alembert's formula, we consider this initial/boundary value problem for the wave equation on the half-line $\rr_+ = (0,\infty)$:
+\begin{equation}
+    \label{halfline}
+    \begin{cases}
+        u_{tt} - u_{xx} = 0 & \text{in} \ \rr_+ \times (0,\infty)\\
+        u(x,0) = g(x), u_t(x,0) = h(x) & \text{on} \ \rr_+ \times \{t=0\}\\
+        u(0,t) = 0 & \text{on} \ \{x=0\}\times(0,\infty)
+    \end{cases}
+\end{equation}
+where $g,h$ are given with $g(0) = h(0) = 0$. We can solve this problem by extending $u,g,h$ to the whole line $\rr$ by odd reflection. That is, we define
+\begin{align*}
+    \widetilde{u}(x,t)&: = \begin{cases}
+        u(x,t) & \ (x \geq 0, t\geq 0)\\
+        -u(-x,t) &  \ (x \leq 0, t\geq 0)
+                            \end{cases}\\
+    \widetilde{g}(x)&: = \begin{cases}
+        g(x) & \ (x \geq 0)\\
+        -g(-x) & \ (x \leq 0)
+                            \end{cases}\\
+    \widetilde{h}(x)&: = \begin{cases}
+        h(x) & \ (x \geq 0)\\
+        -h(-x) & \ (x \leq 0)
+                            \end{cases}
+\end{align*}
+We could differentiate $\widetilde{u}$ with respect to $x$ and $t$ and obtain
+\begin{align*}
+    \widetilde{u}_x(x,t)&: = \begin{cases}
+        u_x(x,t) & \ (x \geq 0, t\geq 0)\\
+        u_x(-x,t) &  \ (x \leq 0, t\geq 0)
+                            \end{cases}\\
+    \widetilde{u}_t(x,t)&: = \begin{cases}
+        u_t(x,t) & \ (x \geq 0, t\geq 0)\\
+        -u_t(-x,t) &  \ (x \leq 0, t\geq 0)
+                            \end{cases}
+\end{align*}
+Differentiating $\widetilde{u}_x$ with respect to $x$ and $\widetilde{u}_t$ with respect to $t$ gives
+\begin{align*}
+    \widetilde{u}_{xx}(x,t)&: = \begin{cases}
+        u_{xx}(x,t) & \ (x \geq 0, t\geq 0)\\
+        -u_{xx}(-x,t) &  \ (x \leq 0, t\geq 0)
+                            \end{cases}\\
+    \widetilde{u}_{tt}(x,t)&: = \begin{cases}
+        u_{tt}(x,t) & \ (x \geq 0, t\geq 0)\\
+        -u_{tt}(-x,t) &  \ (x \leq 0, t\geq 0)
+                            \end{cases}
+\end{align*}
+Then, by \ref{halfline}, we have
+\begin{equation*}
+    \begin{cases}
+        \widetilde{u}_{tt} - \widetilde{u}_{xx} = 0 & \text{in} \ \rr \times (0,\infty)\\
+        \widetilde{u}(x,0) = \widetilde{g}(x), \widetilde{u}_t(x,0) = \widetilde{h}(x) & \text{on} \ \rr \times \{t=0\}
+    \end{cases}
+\end{equation*}
+This is the wave equation on the whole line $\rr$ with initial data $\widetilde{g}, \widetilde{h}$. By d'Alembert's formula, the solution is
+\begin{equation*}
+    \widetilde{u}(x,t) = \frac{1}{2}[\widetilde{g}(x+t) + \widetilde{g}(x-t)] + \frac{1}{2}\int_{x-t}^{x+t} \widetilde{h}(y) dy
+\end{equation*}
+Recalling the definitions of $\widetilde{u}, \widetilde{g}, \widetilde{h}$ above, since $x \geq 0$, then $x+t \geq 0$ but it is uncertain whether $x-t \geq 0$. If $x-t \geq 0$, then $\widetilde{g}(x-t) = g(x-t)$. If $x-t < 0$, then $\widetilde{g}(x-t) = -g(t-x)$. Thus, the solution $\widetilde{u}$ can be written as for $x \geq 0$ and $t \geq 0$:
+\begin{equation}
+    \label{halfline_sol}
+    u(x,t) = \begin{cases}
+        \frac{1}{2}[g(x+t) - g(x-t)] + \frac{1}{2}\int_{x-t}^{x+t} h(y) dy & \quad \text{if} \ x \geq t \geq 0\\
+        \frac{1}{2}[g(x+t) - g(t-x)] + \frac{1}{2}\int_{-x+t}^{x+t} h(y) dy &  \quad \text{if} \ 0 \leq x \leq t 
+            \end{cases}
+\end{equation}
+Note that this solution does not belong to $C^2$, unless $g''(0)  = 0$.
+
+\subsection{Spherical means}
+When $c=1$, we suppose $n \geq 2$, $m \geq 2$, and $u \in C^m(\rr^n \times [0,\infty))$ solves this initial evalue problem:
+\begin{equation}
+    \label{n_sphere}
+    \begin{cases}
+        u_{tt} - \Delta u = 0 & \text{in} \ \rr^n \times (0,\infty)\\
+        u(\mathbf{x},0) = g(\mathbf{x}), u_t(\mathbf{x},0) = h(\mathbf{x}) & \text{on} \ \rr^n \times \{t=0\}
+    \end{cases}
+\end{equation}
+We try to find an explicit formula of $u$ in terms of $g$ and $h$. We consider the avarage of $u$ over certain spheres. These avarages are called spherical means as functions of the time $t$ and the radius $r$. It turns out that to solve the Euler-Poisson-Darboux equation, which is a PDE we can for odd $n$ to convert it into an ordinary one-dimensional wave equation. Thus, we can apply d'Alembert's formula leading a formula for the solution. We introduce some notations firstly:
+    \begin{itemize}
+        \item [(i)] Let $\vc \in \rr^n, r>0$. The \textbf{ball average} of $f$ at $\vc$ and radius $r$ is defined as:
+        \begin{equation}
+            \label{ball_average}
+         U(\vc;r, t) := \bbint_{\partial B(\vc,r)} u(\mathbf{y},t) d S(\mathbf{y})
+        \end{equation}
+        the average of $u(\vcc, t)$ over the sphere $\partial B(\vc, r)$.
+        \item [(ii)] Similarity, for intial condition $g$ and $h$, we define
+         \begin{equation*}
+         \begin{cases}
+             G(\vc, r): =& \bbint_{\partial B(\vc,r)} g(\mathbf{y}) d S(\mathbf{y})\\
+             H(\vc, r): =& \bbint_{\partial B(\vc,r)} h(\mathbf{y}) d S(\mathbf{y})
+         \end{cases}
+     \end{equation*}
+        \end{itemize}
+Then, we have the following lemma:
+\begin{lemma}(Euler-Poisson-Darbous equation). Fix $x\in \rr^n$, and let $u$  satisfy \ref{n_sphere}. Then $U \in C^{m}\left(\overline{\mathbb{R}}_{+} \times[0, \infty)\right)$ and 
+    \begin{equation}
+        \label{EPD}
+        \begin{cases}
+            U_{tt} - U_{rr} - \frac{n-1}{r}U_r = 0 & \text{in}\ \rr_{+} \times (0,\infty)\\
+            U(r,0) = G(r), U_t(r,0) = H(r) & \text{on} \ \rr_{+} \times \{t=0\}
+        \end{cases}
+    \end{equation}
+\end{lemma}
+The partial differential equation (\ref{EPD}) is called the Euler-Poisson-Darboux equation. (Note that the term $U_{rr}+\frac{n-1}{r} U_r$ is the ratial part of the Laplacian $\Delta$ in polar coordinates.) We prove this lemma as follows:
+\begin{proof}
+    \begin{itemize}
+        \item [1.] We first prove that $U \in C^{m}\left(\overline{\mathbb{R}}_{+} \times[0, \infty)\right)$. We fix $t \geq 0$ and $r \geq 0$. Let $\vc \in \rr^n$ and $r>0$. We write $U(\vc; r ,t)$ as:
+        \begin{equation*}
+            U(\vc;t,r) = \bbint_{\partial B(\vc,r)} u(\mathbf{y},t) d S(\mathbf{y}) \overset{\mathbf{y} = \mathbf{x}+r\mathbf{z}}{=} \bbint_{\partial B(\mathbf{0},1)} u(\vc+r \mathbf{z},t)  d S(\mathbf{z})
+        \end{equation*}
+        We differentiate this with respect to $r$:
+        \begin{equation*}
+            U_r = \bbint_{\partial B(\mathbf{0},1)} D u(\vc+r \mathbf{z},t) \cdot \mathbf{z} d S(\mathbf{z}) \overset{\mathbf{z} = \frac{\mathbf{y}-\vc}{r}}{=} \bbint_{\partial B(\vc,r)} D u(\mathbf{y},t) \cdot \frac{\mathbf{y}-\vc}{r} d S(\mathbf{y})
+        \end{equation*}
+        Consequently, by Green's formula, we have:
+        \begin{align*}
+            U_r(\vc; r, t) &= \ \bbint_{\partial B(\vc,r)} D u(\mathbf{y},t) \cdot \frac{\mathbf{y}-\vc}{r} d S(\mathbf{y}) \\
+                           &= \ \bbint_{\partial B(\vc,r)} \frac{\partial u(\mathbf{y},t)}{\partial \nu} d S(\mathbf{y})\\
+                         &= \frac{r}{n} \bbint_{ B(\vc,r)} \Delta u(\mathbf{y},t) d \mathbf{y}
+        \end{align*}
+        From this equality, we deduce that $\lim_{r \to 0^+} U_r(\vc;r,t) = 0$. 
+        We then differentiate $U_r$ with respect to $r$ again, we use some trick to do this:
+        By the definition of avarage of $u$ over the sphere, we have:
+        \begin{equation*}
+            r^{n-1} U_r(\vc;r,t) = \frac{1}{n\alpha(n)} \int_{B(\vc,r)} \Delta u(\mathbf{y},t) d \mathbf{y}
+        \end{equation*}
+        We differentiate both sides with respect to $r$:
+        \begin{equation*}
+            r^{n-1} U_{rr}(\vc;r,t) + (n-1)r^{n-2} U_r(\vc;r,t) = \frac{1}{n\alpha(n)} \int_{\partial B(\vc,r)} \Delta u(\mathbf{y},t) d S(\mathbf{y})
+        \end{equation*}
+        Then, we have the following equality:
+        \begin{equation}
+            \label{Urr}
+            U_{rr} (\vc; r,t) = \bbint_{\partial B(\vc,r)} \Delta u(\mathbf{y},t) d S(\mathbf{y}) + \left(\frac{1}{n}-1\right)\bbint_{B(\vc,r)} \Delta u(\mathbf{y},t) d \mathbf{y}
+        \end{equation}
+        Therefore, $\lim_{r \to 0^+} U_{rr}(\vc;r,t) = \frac{1}{n} \Delta u(\vc,t)$. We use $(\ref{Urr})$, we could compute $U_{rrr}(x;r,t)$, etc. Therefore, we could verify that $U\in C^{m}\left(\overline{\mathbb{R}}_{+} \times[0, \infty)\right)$.
+        \item[2.] By the equation in $(\ref{n_sphere})$, we have:
+        \begin{equation*}
+            U_r = \frac{r}{n} \bbint_{B(\vc,r)} \Delta u(\mathbf{y},t) d \mathbf{y} = \frac{r}{n} \bbint_{B(\vc,r)} u_{tt} d\mathbf{y} = \frac{1}{n\alpha(n)} \frac{1}{r^{n-1}}\int_{B(\vc,r)} u_{tt} d\mathbf{y}
+        \end{equation*}
+        Thus, we have:
+        \begin{equation*}
+            r^{n-1} U_r = \frac{1}{n\alpha(n)} \int_{B(\vc,r)} u_{tt} d\mathbf{y}
+        \end{equation*}
+        We differentiate both sides with respect to $r$:
+        \begin{align*}
+            (n-1)r^{n-2} U_r + r^{n-1} U_{rr} &= \frac{1}{n\alpha(n)} \int_{\partial B(\vc,r)} u_{tt} dS(\mathbf{y}) \\
+            &= r^{n-1} \bbint_{\partial B(\vc,r) } u_{tt} dS(\mathbf{y}) = r^{n-1} U_{tt}
+        \end{align*}
+        Then, we could substitute this into $(\ref{n_sphere})$, we have:
+        \begin{equation}
+            \label{Utt}
+            U_{tt} = U_{rr} + \frac{n-1}{r} U_r \Rightarrow U_{tt} - U_{rr} - \frac{n-1}{r} U_r = 0
+        \end{equation}
+\end{itemize}
+\end{proof}
+\subsection{Solution for $\mathbf{n=3,2}$, Kirchhoff's and Poisson's formulas}
+\subsubsection{Solution for $\mathbf{n=3}$}
+We now consider the case $n=3$. Therefore, the equation $(\ref{n_sphere})$ becomes:
+\begin{equation}
+    \label{3_sphere}
+    \begin{cases}
+        u_{tt} -\Delta u = 0 & \text{in} \ \mathbb{R}^3 \times (0,\infty) \\
+        u = g, u_t = h & \quad \text{on} \ \rr^n \times \{t=0\} \\
+    \end{cases}
+\end{equation}
+The plan is to transfer the Euler-Poisson-Darbous equation into the usual one-dimensional wave equation. We first consider the case $n=3$. We suppose that $u \in C^2(\mathbb{R}^3 \times [0,\infty))$ is a solution of the initial value problem $(\ref{n_sphere})$. We set:
+\begin{equation}
+    \label{U_wa}
+    \tilde{U} := r U \quad \tilde{G} := rG \quad \text{and} \quad \tilde{H} := r H
+\end{equation}
+We now verify that $\tilde{U}$ solves the following initial value problem:
+\begin{equation}
+    \label{U_wa_eq}
+    \begin{cases}
+        \tilde{U}_{tt} - \tilde{U}_{rr} = 0 & \text{in} \ \mathbb{R}^3 \times (0,\infty) \\
+        \tilde{U} = \title{G}, \tilde{U}_t = \tilde{H}& \quad \text{on} \ \rr_+ \times \{t=0\} \\
+        \tilde{U} = 0 & \quad \text{on}\ \{r=0\} \times (0,\infty)
+    \end{cases}
+\end{equation}
+Indeed, we have
+\begin{align*}
+    \tilde{U}_{tt} &= r U_{tt}\\
+    &= r[U_{rr}+\frac{2}{r}U_r] \quad \text{by} \ (\ref{Utt}), \ \text{with}\ n=3 \\
+    &= 2U_{rr} + 2U_r\\
+    &= (U+rU_r)_r\\
+    &= \tilde{U}_{rr} \quad \text{by} \ (\ref{U_wa})
+\end{align*}
+It is easy to verify that $\tilde{G}_{rr}(0)=0$. Therefore, we could apply $(\ref{halfline_sol})$ to $(\ref{U_wa_eq})$, for $0 \leq r \leq t$, we have:
+\begin{equation}
+    \label{U_wa_sol}
+    \tilde{U}(\vc; r,t) = \frac{1}{2} \left[\tilde{G}(t+r) + \tilde{G}(t-r) \right]+ \int_{t-r}^{t+r} \tilde{H}(y) dy
+\end{equation}
+By the definition of the average ball and surface, we have:
+\begin{equation*}
+    u(\vc,t) = \lim_{r \to 0^+} U(\vc; r,t).
+\end{equation*}
+Therefore, we could conclude that from $(\ref{U_wa})$ and $(\ref{U_wa_sol})$:
+\begin{align*}
+    u(\vc,t) &= \lim_{r \to 0^+} \frac{\tilde{U}(\vc;r,t) r}{r}\\
+             &= \lim_{r \to 0^+} \frac{\tilde{U}(\vc;r,t) r}{r}\\
+             &= \lim_{r \to 0^+} \frac{1}{2r} \left[\tilde{G}(t+r) + \tilde{G}(t-r) \right]+ \int_{t-r}^{t+r} \tilde{H}(y) dy\\
+             &= \lim_{r \to 0^+} \left[\frac{\tilde{G}(t+r)-\tilde{G}(t-r)}{2r}+\frac{1}{2r}\int_{t-r}^{t+r}\tilde{H}(y dy)\right]\\
+             &= \tilde{G}'(t) + \tilde{H}(t)\\
+\end{align*}
+Now
+\begin{equation*}
+\tilde{G}(\vc; r) = r G(\vc; r) = r \bbint_{\partial B(\vc,r)} g(\vcc) dS(\vcc)
+\end{equation*}
+implies,
+\begin{equation*}
+\tilde{G}(\vc; t) = t G(\vc; t) = t \bbint_{\partial B(\vc,t)} g(\vcc) dS(\vcc)
+\end{equation*}
+Similarly,
+\begin{equation*}
+\tilde{H}(\vc; t) = r H(\vc; t) = t \bbint_{\partial B(\vc,t)} h(\vcc) dS(\vcc)
+\end{equation*}
+Therefore, the solution of wave eqaution in $\rr^3$ is given by:
+\begin{equation}
+    \label{wave_sol}
+    u(\vc,t) =\frac{\partial}{\partial t} \left(t \bbint_{\partial B(\vc,t)} g(\mathbf{y}) dS(\mathbf{y})\right) + t \bbint_{\partial B(\vc,t)} h(\mathbf{y}) dS(\mathbf{y})
+\end{equation}
+If $g$ is smooth, then the solution could simplifed further. In particular, for $g$ is enough, we have:
+\begin{align*}
+    \frac{\partial}{\partial t}\left(t \bbint_{\partial B(\vc,t)}g(\mathbf{y})dS(\mathbf{y})\right) &= \frac{\partial}{\partial t}\left(t \bbint_{\partial B(\mathbf{0}, 1)}g(\vc+t\vccc)dS(\vccc)\right)\\
+    &= \bbint_{\partial B(\mathbf{0},1)} g(\vc+t\vccc)dS(\vccc) + t\bbint_{\partial B(\mathbf{0},1)} Dg(\vc+t\vccc)\cdot \vccc dS(\vccc)\\
+    & =\bbint_{\partial B(\vc,t)} g(\vcc)dS(\vcc) + t \bbint_{\partial B(\vc,t)} D g(\vcc) \cdot \left(\frac{\vcc-\vc}{t}\right) dS(\vcc)\\
+    & = \bbint_{\partial B(\vc,t)} g(\vcc)dS(\vcc) +  \bbint_{\partial B(\vc,t)} D g(\vcc) \cdot (\vcc-\vc) dS(\vcc)
+\end{align*}
+And
+\begin{equation*}
+    \tilde{H}(\vc; t) =t H(\vc;t) =t \bbint_{\partial B(\vc,t)} h(\vcc) dS(\vcc)
+\end{equation*}
+Therefore, substitute these into $(\ref{wave_sol})$, we have:
+\begin{equation}
+    \label{wave_sol_smooth}
+    u(\vc,t) = \bbint_{\partial B(\vc,t)} [t h(\vcc) + g(\vcc) + Dg(\vcc) \cdot (\vcc-\vc)] dS(\vcc)
+\end{equation}
+Further, we note that in $\rr^3$,
+\begin{equation}
+    \label{wave_sol_smooth_2}
+    u(\vc,t) = \frac{1}{4\pi t^2} \bbint_{\partial B(\vc,t)} [t h(\vcc) + t g(\vcc) + t Dg(\vcc) \cdot (\vcc-\vc)] dS(\vcc)
+\end{equation}
+This is know as the \textit{Kirchhoff's formula} for the solution for the initial value problem of the wave equation in $\rr^3$.
+\begin{remark}
+    Above we found the solution for the wave equation in $\rr^3$ in the case where $c=1$. In fact, when $c\neq 1$, we could use the change of variable to apply the formula above. In particular, consider the initial value problem:
+    \begin{equation}
+        \label{wave_eqn_c}
+        \begin{cases}
+            u_{tt} - c^2 \Delta u = 0, & \text{in } \rr^3 \times (0,\infty)\\
+            u(\vc,0) = g(\vc), & \text{in } \rr^3\\
+            u_t(\vc,0) = h(\vc), & \text{in } \rr^3
+        \end{cases}
+    \end{equation}
+    We suppose that $v$ is a solution of $(\ref{wave_eqn_c})$. Then, we define $u(\vc,t) = v(\vc, \frac{1}{c}t)$. Then,
+    \begin{equation*}
+        u_{tt} - \Delta u = \frac{1}{c^2}v_{tt} -  \Delta v = 0
+    \end{equation*}
+    It implies that $u$ is a solution of
+    \begin{equation*}
+        \begin{cases}
+            u_{tt} - \Delta u = 0\quad x\in \rr^3 \times (0,\infty)\\ 
+            u(\vc,0) = g(\vc)\\
+            u_t(\vc,0) = \frac{1}{c}h(\vc)
+        \end{cases}
+    \end{equation*}
+    Therefore, $u$ is given by the Kirchhoff's formula. Now, by making the change of variables o$t = \frac{1}{c} t$, we see that
+    \begin{equation*}
+        v(\vc,t) = u(\vc,ct) = \frac{1}{4\pi c^2 t^2} \bbint_{\partial B(\vc,ct)} [t h(\vcc) + g(\vcc) +  Dg(\vcc) \cdot (\vcc-\vc)] dS(\vcc)
+    \end{equation*}
+\end{remark}
+\subsubsection{Solution for $\mathbf{n=2}$}
+There is no transformation like $(\ref{U_wa})$ working to convert the Euler-Poisson-Darboux equation into one-demensional wave equation when $n=2$. Instead, we take the initial value problem for $n=2$:
+\begin{equation}
+    \label{wave_eqn_2}
+    \begin{cases}
+        u_{tt} - \Delta u = 0, & \text{in } \rr^2 \times (0,\infty)\\
+        u(\vc,0) = g(\vc), & \text{in } \rr^2\\
+        u_t(\vc,0) = h(\vc), & \text{in } \rr^2
+    \end{cases}
+\end{equation}
+and simply regard it as a problem for $n=3$, in which the third spartial variable is set to be zero. Suppose $u \in C^2(\rr^2 \times [0,\infty)$ is a solution of $(\ref{wave_eqn_2})$. We define
+\begin{equation}
+    \label{wave_sol_2}
+    \so(x_1,x_2,x_3,t) := u(x_1,x_2,t)
+\end{equation}
+Then, $(\ref{n_sphere})$ implies that $\so$ is a solution of
+\begin{equation}
+    \label{wave_eqn_3}
+    \begin{cases}
+        \so_{tt} - \Delta \so = 0, & \text{in } \rr^3 \times (0,\infty)\\
+        \so = \overline{g}, \so_t = \overline{h}, & \text{on } \rr^3 \times \{t=0\},
+    \end{cases}
+\end{equation}
+for
+\begin{equation*}
+    \overline{g}(x_1,x_2,x_3) := g(x_1,x_2), \ \overline{h}(x_1,x_2,x_3) := h(x_1,x_2)
+\end{equation*}
+If we write $\vc = (x_1,x_2) \in \rr^2$ and $\overline{\vc}=(x_1,x_2,0) \in \rr^3$, then $(\ref{wave_eqn_3})$ and Kirchoff's formula $(\ref{wave_sol})$ imply that
+\begin{equation}
+    \label{wave_sol_3_2}
+    u(\vc,t) = \so(\overline{\vc},t) = \frac{\partial }{\partial t}\left(t \bbint_{\partial \overline{B} (\overline{\vc},t)}\overline{g} d\overline{S}\right)+ t \bbint_{\partial \overline{B} (\overline{\vc},t)}\overline{h} d\overline{S}
+\end{equation}
+where $\overline{B}(\overline{\vc},t)$ is the ball in $\rr^3$ centered at $\overline{\vc}$ with radius $t>0$, and $d \overline{S}$ denotes two-dimensional surface measure on $\partial \overline{B}(\overline{\vc},t)$. We can rewrite $(\ref{wave_sol_3_2})$ by observing that
+\begin{equation*}
+    \bbint_{\partial \overline{B} (\overline{\vc},t)}\overline{g} d\overline{S} = \frac{1}{4\pi t^2} \int_{\partial \overline{B} (\overline{\vc},t)} g(\vcc) dS(\vcc) = \frac{2}{4 \pi t^2} \int_{B (\vc,t)} g(\vcc)(1+|D \gamma (\vcc)|^2)^{1/2} d\vcc
+\end{equation*}
+where $\gamma(\vcc) = (t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}$ for $\vcc \in B(\vc,t)$. There is a ``$2$'' in the denominator since $\partial \overline{B}(\overline{\vc},t)$ is the union of two hemispheres. Since $\gamma(\vcc) = (t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}$ for $\vcc \in B(\vc,t)$, we have
+\begin{equation*}
+    D \gamma(\vcc) = - \frac{\vcc-\vc}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} 
+\end{equation*}
+which impies that
+\begin{equation*}
+    (1+|D \gamma (\vcc)|^2)^{1/2} = \frac{t}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}}
+\end{equation*}
+We substitute this into the above equation and obtain
+\begin{align*}
+    \bbint_{\partial \overline{B} (\overline{\vc},t)}\overline{g} d\overline{S} &= \frac{1}{2\pi t} \int_{B (\vc,t)} \frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc \\
+    & = \frac{\alpha(2)t^2}{2\pi t} \bbint_{B(\vc,t)} \frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc \\
+    &= \frac{t}{2} \bbint_{B(\vc,t)} \frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc \\
+\end{align*}
+Similarly,
+\begin{align*}
+    \bbint_{\partial \overline{B} (\overline{\vc},t)}\overline{h} d\overline{S} &= \frac{t}{2} \bbint_{B(\vc,t)} \frac{h(\vcc)}{(t^2 -|\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc \\
+\end{align*}
+Consequently, $(\ref{wave_sol_3_2})$ becomes
+\begin{equation*}
+    u(\vc,t) = \frac{1}{2}\frac{\partial }{\partial t}\left(t^2 \bbint_{B(\vc,t)} \frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc\right) + \frac{t^2}{2} \bbint_{B(\vc,t)} \frac{h(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc
+\end{equation*}
+Since 
+\begin{equation*}
+    t^2\bbint_{B(\vc,t)} \frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc \overset{\vcc = \vc+t\vccc}{=}t \bbint_{B(\mathbf{0},1)} \frac{g(\vc+t\vccc)}{(1-|\vccc|^2)^{\frac{1}{2}}} d\vccc
+\end{equation*}
+so
+\begin{align*}
+    \frac{\partial}{\partial t}&\left(t^2 \bbint_{B(\vc,t)}\frac{g(\vcc)}{(t^2-|\vcc-\vc|^2)^{\frac{1}{2}}}\right)\\
+    &= \frac{\partial}{\partial t}\left(t \bbint_{B(\mathbf{0},1)} \frac{g(\vc+t\vccc)}{(1-|\vccc|^2)^{\frac{1}{2}}} d\vccc\right)\\
+    &= \bbint_{B(\mathbf{0},1)} \frac{g(\vc+t\vccc)}{(1-|\vccc|^2)^{\frac{1}{2}}} d\vccc + t \bbint_{B(\mathbf{0},1)} \frac{ D g(\vc+t\vccc)\cdot \vccc}{(1-|\vccc|^2)^{\frac{1}{2}}} d\vccc\\
+    &= \bbint_{B(\vc,t)} \frac{g(\vcc)}{(t^2-|\vcc-\vc|^2)^{\frac{1}{2}}} d\vccc + t \bbint_{B(\vc,t)} \frac{ D g(\vcc)\cdot (\vcc-\vc)}{(t^2-|\vcc-\vc|^2)^{\frac{1}{2}}} d\vccc\\
+\end{align*}
+Therefore, we could rewrite the solution as
+\begin{equation}
+    \label{PF}
+    u(\vc,t) = \frac{1}{2}\bbint_{B(\vc,t)} \frac{t g(\vcc)+t^2h(\vcc)+t D g(\vcc)\cdot(\vcc-\vc)}{(t^2-|\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc
+\end{equation}
+for $\vc \in \rr^2, t > 0$. This is the \textit{Poisson formula} for the solution of the inital value problem $(\ref{n_sphere})$ in two dimensions. Again, by making a change of variables, we could see that the solution of the wave equaiton in two dimensions is given by
+\begin{equation*}
+    u(\vc,t) = \frac{1}{2 c^2} \bbint_{B(\vc,t)} \frac{ct g(\vcc)+ct^2h(\vcc)+c t D g(\vcc)\cdot(\vcc-\vc)}{(c^2t^2-|\vcc-\vc|^2)^{\frac{1}{2}}} d\vcc
+\end{equation*}
+ This trick of solving the problem for $n=3$ first and then dropping to $n=2$ is called \textit{method of descent}. It is generally used to find the solution of the wave equation in even dimensions, using the solution of the wave equation in the next higher odd dimensions.
+\subsubsection{Solution for odd $\mathbf{n}$}
+Assume now
+\begin{center}
+    $n$ is an odd integer, $n \geq 3$.
+\end{center}
+We first record some identities that will be useful in the following discussion. 
+\begin{lemma}
+    Let $\phi :\rr \to \rr \in C^{k+1}$. Then, for $k=1,2,\cdots$:
+    \begin{itemize}
+        \item [(i)] $\left(\frac{d^2}{dr^2}\right)\left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}(r^{2k-1}\phi(r)) = \left(\frac{1}{r}\frac{d}{dr}\right)^k\left(r^{2k}\frac{d\phi}{dr}(r)\right)$,
+        \item [(ii)] $\left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}(r^{2k-1}\phi(r)) = \sum_{j=0}^{k-1} \beta_j^{k}r^{j+1}\frac{d^j\phi}{dr^j}$, where the constant $\beta_j^{k}(j=0, 1, \ldots, k-1)$ are independent of $\phi$.
+        \item [(iii)] $\beta_0^k = 1\cdot 3\cdot 5 \cdot \cdot \cdot \cdot \cdot \cdot (2k-1)$.
+    \end{itemize}
+\end{lemma}
+\begin{proof}
+    We prove these by induction: 
+    \begin{itemize}
+        \item [(i)] For $k=1$, we have
+        \begin{align*}
+            \frac{d}{d^2r}(r\phi(r)) &= \frac{d}{dr}\left(\frac{d}{dr}(r\phi(r))\right)\\
+            &= \frac{d}{dr}\left(\phi(r)+r\frac{d\phi}{dr}(r)\right)\\
+            &= 2\frac{d\phi}{dr}(r)+r\frac{d^2\phi}{dr^2}(r)\\
+            &= \frac{1}{r}\left(2r\frac{d\phi}{dr}(r)+r^2\frac{d^2 \phi}{dr}(r)\right)\\
+            &= \frac{1}{r}\frac{d}{dr}\left(r^2\frac{d\phi}{dr}(r)\right)
+        \end{align*}
+        Now, assume that the result holds for $k-1$, 
+        \begin{equation*}
+            \frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}(r^{2k-3}\phi(r)) = \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-2}\frac{d\phi}{dr}(r)\right)
+        \end{equation*}
+        then for $k$, we have
+        \begin{align*}
+            LHS &= \frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}(r^{2k-1}\phi(r)) = \frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}\left((2k-1)r^{2k-3}\phi(r)+r^{2k-2}\frac{d\phi}{dr}(r)\right)\\
+            RHS &= \left(\frac{1}{r}\frac{d}{dr}\right)^k\left(r^{2k}\frac{d\phi}{dr}(r)\right) = \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left((2k)r^{2k-2}\frac{d\phi}{dr}(r)+r^{2k-1}\frac{d^2\phi}{dr^2}(r)\right)\\ 
+        \end{align*}
+        By the induction hypothesis, the first term of RHS could be merged with the first term of LHS. Therefore, we have
+        \begin{align*}
+            &LHS-RHS \\
+            &= -\frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}\left(r^{2k-3}\left(\phi(r)-r\frac{d\phi}{dr}(r)\right)\right)-\left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-1}\frac{d^2\phi}{dr^2}(r)\right)\\
+            &= \frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}\left(r^{2k-3}\left(r\frac{d\phi}{dr}(r)-\phi(r)\right)\right)-\left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-1}\frac{d^2\phi}{dr^2}(r)\right)\\
+        \end{align*}
+        Use the induction hypothesis again with $\left(r\frac{d\phi}{dr}(r)-\phi\right)$ to replace $\phi$, we have
+        \begin{equation*}
+        \frac{d^2}{dr^2}\left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}\left(r^{2k-3}\left(r\frac{d\phi}{dr}(r)-\phi(r)\right)\right) = \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-2}\frac{d}{dr}\left(r\frac{d\phi}{dr}(r)-\phi(r)\right)\right)
+        \end{equation*}
+        Therefore, 
+        \begin{align*}
+            LHS-RHS& = \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-2}\frac{d}{dr}\left(r\frac{d\phi}{dr}(r)-\phi(r)\right)-r^{2k-1}\frac{d^2\phi}{dr^2}(r)\right) \\
+                &= \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}\left(r^{2k-1}\frac{d^2\phi}{dr^2}(r)-r^{2k-1}\frac{d^2\phi}{dr^2}(r)\right)\\
+                &= 0
+        \end{align*}
+        \item [(ii)] For $k=1$, we have
+        \begin{equation*}
+            r\phi(r) = \beta_0^0 r \phi(r)
+        \end{equation*}
+        By $(iii)$, we have $\beta_0^0 = 1$. Now, assume that the result holds for $k-1$,
+        \begin{equation*}
+            \left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}(r^{2k-3}\phi(r)) = \sum_{j=0}^{k-2} \beta_j^{k-1}r^{j+1}\frac{d^j\phi}{dr^j}
+        \end{equation*}
+        then for $k$, we have
+        \begin{align*}
+            LHS &= \left(\frac{1}{r}\frac{d}{dr}\right)^{k-1}(r^{2k-1}\phi(r)) = \left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}\left((2k-1)r^{2k-3}\phi(r)+r^{2k-2}\frac{d\phi}{dr}(r)\right)\\
+            RHS &= \sum_{j=0}^{k-1} \beta_j^{k}r^{j+1}\frac{d^j\phi}{dr^j} = \sum_{j=0}^{k-2} \beta_j^{k}r^{j+1}\frac{d^j\phi}{dr^j}+\beta_{k-1}^{k}r^{k}\frac{d^{k-1}\phi}{dr^{k-1}}\\
+        \end{align*}
+        By the induction hypothesis, the first term of RHS could be merged with the first term of LHS. Therefore, we have
+        \begin{align*}
+            LHS-RHS &= \left(\frac{1}{r}\frac{d}{dr}\right)^{k-2}r^{2k-2}\frac{d\phi}{dr}(r) - \beta_{k-1}^{k}r^{k}\frac{d^{k-1}\phi}{dr^{k-1}}\\
+        \end{align*}
+        \item [(iii)] If we set $\phi(r) = 1$ and apply $(ii)$, then we have the value of $\beta_0^k$ for all $k$. 
+    \end{itemize}
+\end{proof}
+Now we set
+$$
+n = 2k+1 \quad (k\geq 1). 
+$$
+If we suppose $u \in C^{k+1}(\rr^n \times [0,\infty))$ solves the intial value problem $(\ref{n_sphere})$. Then the function $U$ defined by $\ref{ball_average}$ is in $C^{k+1}(\rr^n \times [0,\infty))$. Next, we introduce the new notations:
+\begin{equation}
+    \label{solution_notation}
+    \begin{cases}
+        \tilde{U}(r,t) := \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U(\vc;r,t))\\
+        \tilde{G}(r,t) := \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}G(\vc;r,t))\\
+        \tilde{H}(r,t) := \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}H(\vc;r,t))\\
+    \end{cases}\quad (r>0,t\geq0)
+\end{equation}
+Then,
+\begin{equation}
+    \label{solution_initial}
+    \tilde{U}(r,0) = \tilde{G}(r), \; \tilde{U}_t(r,0) = \tilde{H}(r)
+\end{equation}
+We combine Lemma 2.1 and the identities provided by Lemma 2.2 to demonstrate the transformation $(\ref{solution_notation})$ of $U$ into $\tilde{U}$ in effect converts the Euler-Poisson-Darboux equation $(\ref{n_sphere})$ into wave equation:
+\begin{lemma}($\tilde{U}$ solves the one-dimesional wave equation) We have:
+    \begin{equation*}
+        \begin{cases}
+            \tilde{U}_{tt} - \tilde{U}_{rr} = 0 \quad \text{in} \;\rr_+\times(0,\infty)\\
+            \tilde{U}(r,0) = \tilde{G}(r), \; \tilde{U}_t(r,0) = \tilde{H}(r) \quad \text{on} \;\rr_+\times\{t=0\}\\
+            \tilde{U} = 0 \quad \text{on} \;\{r=0\}\times(0,\infty)
+        \end{cases}
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    If $r>0$, then by $(i)$ of Lemma 2.2, we have
+    \begin{align*}
+        \wa_rr &= \left(\frac{\partial^2}{\partial r^2}\right)\left(\frac{1}{r}\frac{\partial}{\partial r}\right)(r^{2k-1}U)\\
+        &= \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^k(r^{2k}U_r)\\   
+        &= \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}\left(\frac{1}{r}\frac{\partial}{\partial r}\right)(r^{2k}U_r)\\
+        &= \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}[r^{2k-1}U_{rr}+2k r^{2k-2}U_r]\\
+        &= \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}\left[r^{2k-1}\left(U_{rr}+\frac{n-1}{r}U_r\right)\right] \quad (n=2k+1)\\
+        &= \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1} U_{tt}) \quad \text{by} \;(\ref{EPD})\\
+        &= \tilde{U}_{tt}
+    \end{align*}
+    It is clear that the next $3$ equations holds according ro $\ref{EPD}$. By $(ii)$ of Lemma 2.2, we have $\wa = 0$ on $\{r=0\}$. Therefore, $\tilde{U}$ solves the one-dimensional wave equation.
+\end{proof}
+Since $\wa$ is a solution of the on-demensional wave equation on the half line, we can apply the d'Alembert formula $(\ref{halfline_sol})$ to obtain the following representation of $\wa$:
+\begin{equation}
+    \label{wa_representation}
+    \wa(r,t) = \frac{1}{2}\left[\tilde{G}(r+t)-\tilde{G}(t-r)\right]+\frac{1}{2}\int_{r-t}^{r+t}\tilde{H}(s)ds
+\end{equation}
+for all $r\in \rr, t>0$. Recall:
+\begin{equation*}
+    u(\vc,t) = \lim_{r\rightarrow 0}U(\vc;r,t)
+\end{equation*}
+Futhermore, by $(ii)$ in Lemma 2.2, we have
+\begin{align*}
+    \wa(r,t)&=\left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}U(\vc;r,t))\\
+            &=\sum_{j=0}^{k-1} \beta_j^k r^{j+1}\frac{\partial^j}{\partial r^j}U(\vc;r,t)\\
+            &=\beta_0^k r U(\vc;r,t)+\sum_{j=1}^{k-1} \beta_j^k r^{j+1}\frac{\partial^j}{\partial r^j}U(\vc;r,t)
+\end{align*}
+Therefore,
+\begin{equation*}
+    \beta_0^k r U(\vc;r,t) = \wa(r,t) - \sum_{j=1}^{k-1} \beta_j^k r^{j+1}\frac{\partial^j}{\partial r^j}U(\vc;r,t)
+\end{equation*}
+which implies
+\begin{equation*}
+    U(\vc;r,t) = \frac{1}{\beta_0^k r}\wa(r,t) - \frac{1}{\beta_0^k r}\sum_{j=1}^{k-1} \beta_j^k r^{j+1}\frac{\partial^j}{\partial r^j}U(\vc;r,t)
+\end{equation*}
+Therefore, we have
+\begin{equation*}
+    u(\vc,t) = \lim_{r \to 0} U(\vc;r,t) = \lim_{r \to 0} \frac{1}{\beta_0^k r}\wa(r,t).
+\end{equation*}
+Thus, $(\ref{wa_representation})$ implies
+\begin{align*}
+    u(\vc,t) &= \lim_{r \to 0} \frac{1}{\beta_0^k r}\left[\frac{1}{2}\left[\tilde{G}(r+t)-\tilde{G}(t-r)\right]+\frac{1}{2}\int_{r-t}^{r+t}\tilde{H}(s)ds\right]\\
+             &= \lim_{r \to 0} \frac{1}{\beta_0^k} \left[\left(\frac{\tilde{G}(r+t)-\tilde{G}(t-r)}{2r}\right)+\frac{1}{2r}\int_{r-t}^{r+t}\frac{\tilde{H}(s)}{r}ds\right]\\
+             &=\frac{1}{\beta_0^k}[\tilde{G}'(t)+\tilde{H}(t)]
+\end{align*}
+We recall that 
+\begin{equation*}
+    \tilde{G}(\vc,r) = \left(\frac{1}{r}\frac{\partial}{\partial r}\right)^{k-1}(r^{2k-1}G(\vc;r))
+\end{equation*}
+Now since $n=2k+1$, it implies that $k=\frac{n-1}{2}$. Therefore, we have
+\begin{equation*}
+    \tilde{G}(\vc,t) = \left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}(t^{n-2}G(\vc;r))
+\end{equation*}
+By the definition of $G(\vc;r)$, we have
+\begin{equation*}
+    \tilde{G}(\vc,t) = \left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}\bbint_{\partial B(\vc,t)}g(\vcc)d S(\vcc)\right)
+\end{equation*}
+Similarly,
+\begin{equation*}
+    \tilde{H}(\vc,t) = \left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}\bbint_{\partial B(\vc,t)}h(\vcc)d S(\vcc)\right)
+\end{equation*}
+Therefore, we have this representation of $u(\vc,t)$:
+\begin{equation}
+    \label{u_representation2}
+    \begin{cases}
+    u(\vc,t) &= \frac{1}{\gamma_n}\left(\frac{\partial}{\partial t}\right)\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}} \left(t^{n-2}\bbint_{\partial B(\vc,t)}g(\vcc)d S(\vcc)\right)  \\
+    &+\frac{1}{\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}\bbint_{\partial B(\vc,t)}h(\vcc)d S(\vcc)\right) \\
+    &\text{where $n$ is odd and $\gamma_n = 1\cdot 3\cdot 5\cdot\cdot\cdot\cdot\cdot(n-2)$ }
+    \end{cases}
+\end{equation}
+for $x\in \rr^n, t>0$. We notice that $\gamma_3=1$, so the representation of $u(\vc,t)$ in $(\ref{u_representation2})$ agrees with $n=3$ with $(\ref{wave_sol_smooth_2})$. We still need to check the formula $(\ref{u_representation2})$ really gives us a solution of $(\ref{wave})$.
+\begin{theorem}(Solution of wave equation in odd dimensions)
+    Assume now 
+    $n$ is an odd integer, $n\geq 3$,
+    and suppose also $g\in C^{m+1}{\rr^n} ,h\in C^{m}(\rr^n)$, for $m=\frac{n+1}{2}$. Define $u(\vc,t)$ by $(\ref{u_representation2})$. Then
+    \begin{itemize}
+        \item [(i)] $u\in C^2(\rr^n\times [0,\infty))$,
+        \item [(ii)] $u_{tt} -\lu = 0$ in $\rr^n\times (0,\infty)$,
+        \item [(iii)] $\lim_{(\vc,t) \to (\vc^0,\mathbf{0}^+)} = g(\vc^0),\; \lim_{(\vc,t)\to(\vc^0,\mathbf{0^+})} = h(\mathbf{x}^0)$ for each point $\vc^0\in \rr^n$.
+    \end{itemize}
+\end{theorem}
+\begin{proof}
+    \begin{itemize}
+        \item [1.] We suppose $g\equiv 0$, so
+        \begin{equation}
+            \label{g=0}
+            u(\vc,t) = \frac{1}{\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(t^{n-2}H(\vc;t)\right)
+        \end{equation}
+        By $(i)$ in Lemma $2.2$, we could compute $u_tt$:
+        \begin{equation}
+            u_{tt} = \frac{1}{\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-1}{2}}\left(t^{n-1}H_{t}(\vc;t)\right)
+        \end{equation}
+        We use the same trick as before,
+        \begin{equation*}
+            H_t(\vc;t) = \frac{t}{n}\bbint_{B(\vc,t)} \Delta h(\vcc)d\vcc
+        \end{equation*}
+        Therefore, by the definition of average ball integral, we have
+        \begin{align*}
+            u_{tt} &= \frac{1}{n\alpha(n)\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-1}{2}}\left(\int_{B(\vc,t)}\Delta h(\vcc)d\vcc\right)\\
+            &= \frac{1}{n\alpha(n)\gamma_n}\left(\frac{1}{t}\frac{\partial}{\partial t}\right)^{\frac{n-3}{2}}\left(\frac{1}{t}\int_{\partial B(\vc,t)}\Delta h(\vcc)dS(\vcc)\right)\\
+        \end{align*}
+        On the other hand,
+        \begin{align*}
+            \lu (\vc,t) &= \frac{1}{\gamma_n}\tp^{\frac{n-3}{2}}(t^{n-2}\Delta H(\vc:t))\\
+                        &= \frac{1}{\gamma_n}\tp^{\frac{n-3}{2}}\left[t^{n-2}\Delta_{\vc}\left(\bbint_{\partial B(\vc,t)}h(\vcc)dS(\vcc)\right)\right]\\
+                        &= \frac{1}{\gamma_n}\tp^{\frac{n-3}{2}}\left[t^{n-2}\bbint_{\partial B(\vc,t)}\Delta h(\vcc)dS(\vcc)\right]\\
+        \end{align*}
+        Then, by the definition of average ball integral, we have
+        \begin{equation*}
+            \lu = \frac{1}{n\alpha(n)\gamma_n}\tp^{\frac{n-3}{2}}\left(\frac{1}{t}\int_{\partial B(\vc,t)}\Delta h(\vcc)dS(\vcc)\right) = u_{tt}
+        \end{equation*}
+        A similar calculation can be done when $h\equiv 0$.
+        \item [2.] If we choose the correct intial conditions $g$ and $h$, then we can show that $u$ is a solution of $(\ref{wave})$.
+    \end{itemize}
+\end{proof}
+\begin{remark}
+    \begin{itemize}
+        \item [(i)] Observing the formula, we need only have information of $g,h$ and their derivatives on the sphere $\partial B(\vc,t)$, not in the whole ball $B(\vc,t)$.
+        \item [(ii)] Comparing the formula $(\ref{u_representation2})$ with $(\ref{dalem})$, we notice that d'Alembert's formula does not the the derivative of $g$. This suggests that for $n>1$, a solution of the wave equation neets not to be as smooth as the initial value $g$.
+    \end{itemize}
+\end{remark}
+\subsubsection{Solution for even $\mathbf{n}$}
+Assume now 
+\begin{center}
+    $n$ is an even integer, $n\geq 4$,
+\end{center}
+Suppose $u$ is a $C^m$ solution of $(\ref{wave})$ in $\rr^n\times (0,\infty)$, where $m=\frac{n+2}{2}$. The trick is the similar as the case when $n=2$, which is called the method of descent. We define
+\begin{equation}
+    \label{lineu}
+    \so(x_1,\cdots,x_n,x_{n+1},t) := u(x_1,\cdots,x_n,t)
+\end{equation}
+solves the wave equation in $\rr^{n+1}\times (0,\infty)$, with initial conditions
+\begin{equation*}
+    \so = \overline{g},\so_t = \overline{h}\quad \text{ on } \rr^{n+1}\times \{t=0\}
+\end{equation*}
+where
+\begin{equation}
+    \label{initial_condition}
+    \begin{cases}
+        \overline{g}(x_1,\cdots,x_n,x_{n+1}) := g(x_1,\cdots,x_n)\\
+        \overline{h}(x_1,\cdots,x_n,x_{n+1}) := h(x_1,\cdots,x_n)
+    \end{cases}
+\end{equation}
+Since $n+1$ is odd, we may apply $(\ref{u_representation2})$(with $n+1$ to replace $n$) to $\so$ to obtain a representation formula for $\so$ in terms of $\overline{g},\overline{h}$. To carry out the details, let us fix $\vc \in \rr^{n}$, $t>0$, and write $\overline{\vc} = (\vc,0)$i.e. $\overline{\vc} = (x_1,\cdots,x_n,0)\in \rr^{n+1}$. Then $(\ref{u_representation2})$ gives with $n+1$ to replace $n$:
+$$
+\begin{aligned}
+u(\vc, t)=\frac{1}{\gamma_{n+1}} & {\left[\frac{\partial}{\partial t}\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n-1} \bbint_{\partial \bar{B}(\bar{\vc}, t)} \bar{g} d \bar{S}\right)\right.} \\
+& \left.+\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n-1} \bbint_{\partial \bar{B}(\bar{\vc}, t)} \bar{h} d \bar{S}\right)\right]
+\end{aligned}
+$$
+where $\gamma_{n+1} = 1 \cdot 3 \cdots (n-1)$ and $B(\vc,t)$ denoting the ball in $\rr^{n+1}$ with center $\vc$ and radius $t$, and $d \overline{S}$ denoting the n-dimensional surface measure on $\partial B(\overline{\vc},t)$. Now, we observe that
+\begin{equation}
+    \label{eavergae_boundary}
+    \bbint_{\partial B(\overline{\vc},t)}\overline{g}(\overline{\vcc})dS(\overline{\vcc}) = \frac{1}{(n+1)\alpha(n+1)t^n}\int_{\partial \overline{B}(\overline{\vc},t)}\overline{g}(\overline{\vcc})dS(\overline{\vcc})
+\end{equation}
+Notice that $\partial \overline{B}(\overline{\vc},t) \cap \{y_{n+1} \geq 0\}$ is the graph of the function $\gamma(\vcc) = (t^2 -|\vcc-\vc|^2)^{\frac{1}{2}}$. Similarly, $\partial \overline{B}(\overline{\vc},t) \cap \{y_{n+1} \leq 0\}$ is the graph of the function $-\gamma(\vcc) $. Thus, $(\ref{eavergae_boundary})$ implies:
+\begin{equation}
+    \label{average_boundary_2}
+    \bbint_{\partial B(\overline{\vc},t)}\overline{g}(\overline{\vcc})dS(\overline{\vcc}) = \frac{2}{(n+1)\alpha(n+1)t^n}\int_{B(\vc,t)}{g}(\vcc)(1+|D \gamma(\vcc)|^2)^{\frac{1}{2}}d\vcc
+\end{equation}
+There is a ``$2$'' in the denominator because $\partial \overline{B}(\overline{\vc},t)$ consists of two hemisphere. Now,
+\begin{equation*}
+    (1+|D \gamma (\vcc)|^2)^{\frac{1}{2}} = \frac{t}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}}
+\end{equation*}
+We substitute this into $(\ref{average_boundary_2})$ to obtain
+\begin{align*}
+    \bbint_{\partial B(\overline{\vc},t)}\overline{g}(\overline{\vcc})dS(\overline{\vcc}) &= \frac{2}{(n+1)\alpha(n+1)t^n}\int_{B(\vc,t)}\frac{g(\vcc)t}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}}d\vcc \\
+    & = \frac{2 t \alpha(n)}{(n+1)\alpha(n+1)}\bbint_{B(\vc,t)}\frac{g(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}}d\vcc \\
+\end{align*}
+Similarly, for $h$, we have
+\begin{equation*}
+    \bbint_{\partial B(\overline{\vc},t)}\overline{h}(\overline{\vcc})dS(\overline{\vcc}) = \frac{2 t \alpha(n)}{(n+1)\alpha(n+1)}\bbint_{B(\vc,t)}\frac{h(\vcc)}{(t^2 - |\vcc-\vc|^2)^{\frac{1}{2}}}d\vcc \\
+\end{equation*}
+We substitute these into the representation formula for $u$ to obtain
+$$
+\begin{aligned}
+& u(\vc, t)= \\
+& \frac{1}{\gamma_{n+1}} \frac{2 \alpha(n)}{(n+1) \alpha(n+1)} {\left[\frac{\partial}{\partial t}\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n} \bbint_{B(\vc, t)} \frac{g(\vcc)}{\left(t^{2}-|\vcc-\vc|^{2}\right)^{1 / 2}} d \vcc\right)\right.} \\
+&+\left.\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n} \bbint_{B(\vc, t)} \frac{h(\vcc)}{\left(t^{2}-|\vcc-\vc|^{2}\right)^{1 / 2}} d \vcc\right)\right] .
+\end{aligned}
+$$
+Since $\gamma_{n+1} = 1 \cdot 3 \cdots (n-1)$ and
+\begin{equation*}
+    \alpha(n) = \frac{\pi^{\frac{n}{2}}}{\Gamma(\frac{n}{2}+1)}
+\end{equation*}
+where $\Gamma$ is the Gamma function,
+$$
+\Gamma(n) = \int_{0}^{\infty} x^{n-1} e^{-x} d x
+$$
+Therefore,
+\begin{align*}
+   \frac{1}{\gamma_{n+1}} \frac{2 \alpha(n)}{(n+1) \alpha(n+1)} &= \frac{1}{1 \cdot 3 \cdots (n-1)} \frac{2 \frac{\pi^\frac{n}{2}}{\Gamma{(\frac{n+2}{2})}}}{(n+1) \frac{\pi^{\frac{n+1}{2}}}{\Gamma({\frac{n+3}{2}})}} \\
+    &= \frac{1}{1 \cdot 3 \cdots (n+1)} \frac{1}{\pi^{\frac{1}{2}}} \frac{\Gamma(\frac{n+3}{2})}{\Gamma(\frac{n+2}{2})}
+\end{align*}
+Using the property of Gamma function,
+$$
+\Gamma(m+1) = m \Gamma(m)
+$$
+and
+$$
+\Gamma\left(\frac{1}{2}\right) = \sqrt{\pi}
+$$
+We could conclude that
+\begin{equation*}
+    \Gamma\left(\frac{n+3}{2}\right) =\left( \frac{n+1}{2}\right) \left(\frac{n-1}{2}\right) \cdots \frac{1}{2} \Gamma\left(\frac{1}{2}\right)
+\end{equation*}
+and
+$$
+\Gamma\left(\frac{n+2}{2}\right) =\left( \frac{n}{2}\right) \left(\frac{n-2}{2}\right) \cdots \left(\frac{2}{2}\right)
+$$
+Therefore,
+$$
+\frac{1}{\gamma_{n+1}} \frac{2 \alpha(n)}{(n+1)\alpha(n+1)} = \frac{1}{2 \cdot 4 \cdots (n-2) \cdot n}
+$$
+We substitute this into the representation formula for $u$ to obtain the fomula for even dimensions:
+$$
+\left\{\begin{aligned}
+& u(\vcc, t)=\frac{1}{\gamma_{n}}\left[\left(\frac{\partial}{\partial t}\right)\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n} \bbint_{B(\vc, t)} \frac{g(\vcc)}{\left(t^{2}-|\vcc-\vc|^{2}\right)^{1 / 2}} d \vcc\right)\right. \\
+&\left.+\left(\frac{1}{t} \frac{\partial}{\partial t}\right)^{\frac{n-2}{2}}\left(t^{n} \bbint_{B(\vc, t)} \frac{h(\vcc)}{\left(t^{2}-|\vcc-\vc|^{2}\right)^{1 / 2}} d \vc\right)\right]
+\end{aligned}\right. \; (44)
+$$
+where $\gamma_n = 2\cdot 4 \cdots (n-2) \cdot n$ for $\vc \in \mathbb{R}^{n}, t>0$ and even $n \geq 2$. Since $\gamma_2 = 2$, it agress with Poisson's formula $(\ref{PF})$ if $n=2$. Hence, we got the following theorem:
+\begin{theorem}(Solution of wave equation in even dimensions)
+  Assume $n$ is an even integer, $n \geq 2$, and suppose also $g \in C^{m+1}\left(\mathbb{R}^{n}\right), h \in C^{m}\left(\mathbb{R}^{n}\right)$, for $m=\frac{n+2}{2}$. Define $u$ by (38). Then
+  \begin{itemize}
+    \item [(i)] $u \in C^{2}\left(\mathbb{R}^{n} \times[0, \infty)\right)$,
+    \item [(ii)] $u_{t t}-\Delta u=0 \quad$ in $\mathbb{R}^{n} \times(0, \infty)$,
+    \item [(iii)] $\lim _{\substack{(\vc, t) \rightarrow\left(\vc^{0}, 0\right) \\ \vc \in \mathbb{R}^{n}, t>0}} u(\vc, t)=g\left(\vc^{0}\right), \lim _{\substack{(\vc, t) \rightarrow\left(\vc^{0}, 0\right) \\ \vc \in \mathbb{R}^{n}, t>0}} u_{t}(\vc, t)=h\left(\vc^{0}\right)$
+  \end{itemize}
+\end{theorem}
+This follows from the Theorem 2.2.
+\begin{remark}
+    \begin{itemize} 
+        \item [(i)] To compute $u(\vc,t)$ for even $n$, we need information on $u=g, u_t = h$ on all of $B(\vc, t)$, and not just on $\partial B(\vc, t)$.
+        \item [(ii)] \textbf{Huggen's principle}: Comparing $(\ref{u_representation2})$ and $(44)$, we observe that if $n$ is odd and $n\geq 3$, then the intial conditions $g, h$ at a given point $\vc \in \rr^n$ affect the solution $u$ only on the boundary $\{(\vcc,t)\;|\;t > 0, |\vc-\vcc| = t\}$ of the cone $C(\vc) = \{(\vcc,t)\;|\; t>0, |\vc-\vcc|<t\}$, On the other hand, if $n$ is even the initial condtion $g, h$ affect the solution $u$ on the whole cone $C(\vc)$.
+    \end{itemize}
+\end{remark}
+\section{References}
+ Evans L. C. Partial Differential Equations[M]. American Mathematical Soc., 1998, 67-82
+\end{document}
